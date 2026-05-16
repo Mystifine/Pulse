@@ -1,32 +1,35 @@
-local Value = require(script.Parent.Value);
+export type Scope = {
+  Add : (self : Scope, task : any) -> (),
+  Destroy : (self : Scope) -> (),
+}
 
 local Scope = {};
 Scope.__index = Scope;
 
-function Scope:Value(value : any)
-  local valueObj = Value.new(value);
-
-  table.insert(self.signals, valueObj.Changed);
-
-  return valueObj;
-end
-
-function Scope:Add(cleanupFunction : () -> ())
-  table.insert(self.signals, cleanupFunction);
+function Scope:Add(task : any)
+  table.insert(self._cleanup, task);
 end
 
 function Scope:Destroy()
-  for _, signal in self.signals do
-    signal:Destroy();
+  for _, task in self._cleanup do
+
+    local taskType = typeof(task);
+
+    if taskType == "RBXScriptConnection" then
+      task:Disconnect();
+    elseif taskType == "Instance" or (type(task) == "table" and task.Destroy) then
+      task:Destroy();
+    elseif type(task) == "function" then
+      task();
+    end
   end
 
-  table.clear(self.signals);
-  setmetatable(self, nil);
+  table.clear(self._cleanup);
 end
 
 function Scope.new()
   local self = setmetatable({}, Scope);
-  self.signals = {};
+  self._cleanup = {};
 
   return self;
 end

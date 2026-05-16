@@ -1,22 +1,81 @@
 local Value = require(script.Value);
+local Scope = require(script.Scope);
+local Runtime = require(script.Runtime);
+local Computed = require(script.Computed);
+
+type Scope = Scope.Scope;
 
 local Pulse = {};
 
+function Pulse._track(obj : any)
+  local scope = Runtime.getCurrentScope();
+  if scope then
+    scope:Add(obj);
+  end
+
+  return obj;
+end
+
+function Pulse.Computed(callback : () -> any)
+  return Pulse._track(Computed.new(callback));
+end
+
+function Pulse.Scope(fn : (scope : Scope) -> ())
+  
+  local scope = Scope.new();
+
+  Runtime.pushScope(scope);
+
+  local results = table.pack(xpcall(fn, debug.traceback, scope));
+  
+  Runtime.popScope();
+
+  local success = table.remove(results, 1);
+  if not success then
+    error(results[1]);
+  end
+
+  return table.unpack(results), scope;
+end
+
 function Pulse.Value(value : any)
-  local valueObj = Value.new(value);
+  local valueObj = Pulse._track(Value.new(value));
 
   return valueObj;
 end
 
 function Pulse.Create(ui : any, properties : {[string] : any})
 
-  local connections = {};
-
   local uiInstance;
   if typeof(ui) == "string" then
     uiInstance = Instance.new(ui);
   else
     uiInstance = ui(properties);
+  end
+
+  for property, value in properties do
+    if property == "Children" then continue end;
+
+    if property == "Events" then
+      for eventName, handler in value do
+        local event = uiInstance[eventName];
+        if event and event.Connect then
+          Pulse._track(event:Connect(function()
+            handler(uiInstance);
+          end));
+        else
+          warn(string.format("Event %s does not exist on %s", eventName, uiInstance.ClassName));
+        end
+      end
+    elseif typeof(value) == "table" then
+      uiInstance[property] = value:Get();
+
+      Pulse._track(value.Changed:Connect(function(newValue)
+        uiInstance[property] = newValue;
+      end))
+    else
+      uiInstance[property] = value;
+    end
   end
 
   local children = properties.Children;
@@ -26,27 +85,7 @@ function Pulse.Create(ui : any, properties : {[string] : any})
     end
   end
 
-  for property, value in properties do
-    if property == "Children" then continue end;
-
-    if typeof(value) == "table" and value.__type == "PulseValue" then
-      local changedConnection = value.Changed:Connect(function(newValue)
-        uiInstance[property] = newValue;
-      end)
-      table.insert(connections, changedConnection);
-      uiInstance[property] = value:Get();
-
-      table.insert(connections, uiInstance.Destroying:Connect(function()
-        for _, conn in connections do
-          conn:Disconnect();
-        end
-      end));
-    else
-      uiInstance[property] = value;
-    end
-  end
-
-  return uiInstance;
+  return Pulse._track(uiInstance);
 end
 
 local text = Pulse.Value("Text");
