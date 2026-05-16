@@ -67,7 +67,7 @@ function Pulse.Create(ui : any, properties : {[string] : any})
           warn(string.format("Event %s does not exist on %s", eventName, uiInstance.ClassName));
         end
       end
-    elseif typeof(value) == "table" then
+    elseif typeof(value) == "table" and (getmetatable(value) == Computed or getmetatable(value) == Value) then
       uiInstance[property] = value:Get();
 
       Pulse._track(value.Changed:Connect(function(newValue)
@@ -87,17 +87,5 @@ function Pulse.Create(ui : any, properties : {[string] : any})
 
   return Pulse._track(uiInstance);
 end
-
-local text = Pulse.Value("Text");
-local label = Pulse.Create("TextLabel", {
-  Text = text,
-  Size = UDim2.fromOffset(100, 50),
-  Children = {
-    Pulse.Create("Frame", {
-      Size = UDim2.fromScale(1, 1),
-      BackgroundColor3 = Color3.fromRGB(255, 0, 0),
-    })
-  },
-})
 
 return Pulse;

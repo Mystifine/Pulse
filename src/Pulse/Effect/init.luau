@@ -5,6 +5,7 @@ local Effect = {};
 
 function Effect:Run()
   
+  self:Clear();
   Runtime.pushObserver(self);
 
   local success, err = xpcall(self.Callback, debug.traceback);
@@ -22,7 +23,7 @@ function Effect:Add(value : any)
   end))
 end
 
-function Effect:Cleanup()
+function Effect:Clear()
   for _, connection in self._Connections do
     connection:Disconnect();
   end
@@ -30,7 +31,7 @@ function Effect:Cleanup()
 end
 
 function Effect:Destroy()
-  self:Cleanup();
+  self:Clear();
   self.Callback = nil;
 end
 
