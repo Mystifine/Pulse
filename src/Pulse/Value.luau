@@ -7,8 +7,9 @@ Value.__type = "PulseValue";
 
 function Value:Get()
 
-  if Runtime.currentObserver then
-    Runtime.currentObserver:Add(self);
+  local currentObserver = Runtime.getCurrentObserver();
+  if currentObserver then
+    currentObserver:Add(self);
   end
 
   return self.Value;

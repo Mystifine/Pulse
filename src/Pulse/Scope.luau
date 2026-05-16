@@ -7,11 +7,11 @@ local Scope = {};
 Scope.__index = Scope;
 
 function Scope:Add(task : any)
-  table.insert(self._cleanup, task);
+  table.insert(self._Items, task);
 end
 
 function Scope:Destroy()
-  for _, task in self._cleanup do
+  for _, task in self._Items do
 
     local taskType = typeof(task);
 
@@ -24,12 +24,12 @@ function Scope:Destroy()
     end
   end
 
-  table.clear(self._cleanup);
+  table.clear(self._Items);
 end
 
 function Scope.new()
   local self = setmetatable({}, Scope);
-  self._cleanup = {};
+  self._Items = {};
 
   return self;
 end
