@@ -2,6 +2,7 @@ local Value = require(script.Value);
 local Scope = require(script.Scope);
 local Runtime = require(script.Runtime);
 local Computed = require(script.Computed);
+local Effect = require(script.Effect);
 
 type Scope = Scope.Scope;
 
@@ -36,6 +37,10 @@ function Pulse.Scope(fn : (scope : Scope) -> ())
   end
 
   return table.unpack(results), scope;
+end
+
+function Pulse.Effect(fn : () -> ())
+  return Pulse._track(Effect.new(fn));
 end
 
 function Pulse.Value(value : any)
