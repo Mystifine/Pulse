@@ -77,7 +77,7 @@ function Pulse.Create(ui : any, properties : {[string] : any})
           warn(string.format("Event %s does not exist on %s", eventName, uiInstance.ClassName));
         end
       end
-    elseif typeof(value) == "table" and (getmetatable(value) == Computed or getmetatable(value) == Value) then
+    elseif typeof(value) == "table" and (getmetatable(value) == Computed or getmetatable(value) == Value or getmetatable(value) == Spring) then
       uiInstance[property] = value:Get();
 
       Pulse._track(value.Changed:Connect(function(newValue)
