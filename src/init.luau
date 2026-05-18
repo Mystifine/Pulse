@@ -18,8 +18,8 @@ function Pulse._track(obj : any)
   return obj;
 end
 
-function Pulse.Spring(source, config : {Frequency : number, Damping : number})
-  return Pulse._track(Spring.new(source, config));
+function Pulse.Spring(source, config : {Frequency : number, Damping : number}?)
+  return Pulse._track(Spring.new(source, config or {}));
 end
 
 function Pulse.Computed(callback : () -> any)
