@@ -3,6 +3,11 @@ local Runtime = require(script.Parent.Runtime);
 local SpringScheduler = require(script.SpringScheduler);
 local Adapter = require(script.Adapter);
 
+export type SpringConfig = {
+  Frequency : number?,
+  Damping : number?,
+}
+
 local Spring = {};
 Spring.__index = Spring;
 Spring.__type = "Spring";
@@ -73,7 +78,8 @@ function Spring:Set(value, resetVelocity)
   SpringScheduler.add(self);
 end
 
-function Spring.new(source, config)
+function Spring.new(source, config : SpringConfig?)
+  local springConfig = config or {};
   local self = setmetatable({}, Spring);
 
   self.Type = Adapter.resolve(source:Get());
@@ -81,8 +87,8 @@ function Spring.new(source, config)
   self.Value = source:Get();
   self.Target = self.Value;
   self.Velocity = self.Type.zero;
-  self.Frequency = config.Frequency or 6;
-  self.Damping = config.Damping or 1;
+  self.Frequency = springConfig.Frequency or 6;
+  self.Damping = springConfig.Damping or 1;
   self.Changed = Signal.new();
 
   self._Connection = source.Changed:Connect(function(newValue)

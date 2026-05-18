@@ -6,6 +6,7 @@ local Effect = require(script.Effect);
 local Spring = require(script.Spring);
 
 type Scope = Scope.Scope;
+type SpringConfig = Spring.SpringConfig;
 
 local Pulse = {};
 
@@ -18,8 +19,32 @@ function Pulse._track(obj : any)
   return obj;
 end
 
-function Pulse.Spring(source, config : {Frequency : number, Damping : number}?)
-  return Pulse._track(Spring.new(source, config or {}));
+function Pulse.ColorSpring(source, config : SpringConfig?)
+  local vector3Source = Pulse.Computed(function()
+    local color3 = source:Get();
+    return Vector3.new(color3.R, color3.G, color3.B);
+  end)
+
+  local internalVectorSpring = Pulse._track(Spring.new(vector3Source, config));
+  local color3Output = Pulse.Computed(function()
+    local vec = internalVectorSpring:Get();
+
+    local r = math.clamp(vec.X, 0, 1);
+    local g = math.clamp(vec.Y, 0, 1);
+    local b = math.clamp(vec.Z, 0, 1);
+
+    return Color3.new(r, g, b);
+  end)
+
+  return color3Output;
+end
+
+function Pulse.Spring(source, config : SpringConfig?)
+  local sourceValue = source:Get();
+  if typeof(sourceValue) == "Color3" then
+    return Pulse.ColorSpring(source, config);
+  end
+  return Pulse._track(Spring.new(source, config));
 end
 
 function Pulse.Computed(callback : () -> any)
