@@ -20,21 +20,23 @@ function Pulse._track(obj : any)
 end
 
 function Pulse.ColorSpring(source, config : SpringConfig?)
-  local vector3Source = Pulse.Computed(function()
-    local color3 = source:Get();
-    return Vector3.new(color3.R, color3.G, color3.B);
-  end)
+  local initialColor = source:Get();
 
-  local internalVectorSpring = Pulse._track(Spring.new(vector3Source, config));
-  local color3Output = Pulse.Computed(function()
-    local vec = internalVectorSpring:Get();
+  local springTarget = Pulse.Value(Vector3.new(initialColor.R, initialColor.G, initialColor.B));
+  local internalVectorSpring = Pulse._track(Spring.new(springTarget, config));
+  local color3Output = Pulse.Value(initialColor);
 
-    local r = math.clamp(vec.X, 0, 1);
-    local g = math.clamp(vec.Y, 0, 1);
-    local b = math.clamp(vec.Z, 0, 1);
+  Pulse._track(source.Changed:Connect(function(newColor)
+    springTarget:Set(Vector3.new(newColor.R, newColor.G, newColor.B));
+  end))
 
-    return Color3.new(r, g, b);
-  end)
+  Pulse._track(internalVectorSpring.Changed:Connect(function(newVector3)
+    local r = math.clamp(newVector3.X, 0, 1);
+    local g = math.clamp(newVector3.Y, 0, 1);
+    local b = math.clamp(newVector3.Z, 0, 1);
+
+    color3Output:Set(Color3.new(r, g, b));
+  end))
 
   return color3Output;
 end
