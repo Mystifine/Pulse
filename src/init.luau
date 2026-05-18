@@ -3,6 +3,7 @@ local Scope = require(script.Scope);
 local Runtime = require(script.Runtime);
 local Computed = require(script.Computed);
 local Effect = require(script.Effect);
+local Spring = require(script.Spring);
 
 type Scope = Scope.Scope;
 
@@ -15,6 +16,10 @@ function Pulse._track(obj : any)
   end
 
   return obj;
+end
+
+function Pulse.Spring(source, config : {Frequency : number, Damping : number})
+  return Pulse._track(Spring.new(source, config));
 end
 
 function Pulse.Computed(callback : () -> any)
