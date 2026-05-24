@@ -81,8 +81,16 @@ adapter.UDim2 = {
   match = function(value)
     return typeof(value) == "UDim2";
   end,
-  isClose = function(a, b)
-    return (a - b).Magnitude < EPSILON;
+  isClose = function(a: UDim2, b: UDim2)
+    local diffXScale = math.abs(a.X.Scale - b.X.Scale)
+    local diffXOffset = math.abs(a.X.Offset - b.X.Offset)
+    local diffYScale = math.abs(a.Y.Scale - b.Y.Scale)
+    local diffYOffset = math.abs(a.Y.Offset - b.Y.Offset)
+
+    return diffXScale < EPSILON 
+       and diffXOffset < EPSILON 
+       and diffYScale < EPSILON 
+       and diffYOffset < EPSILON 
   end,
 }
 
