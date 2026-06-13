@@ -6,7 +6,7 @@ local heartbeatConnection = nil;
 
 function SpringScheduler._onHeartbeat(dt)
   for spring in pairs(activeSprings) do
-    spring:_onStep(dt);
+    spring:_onHeartbeat(dt);
   end
 
   if next(activeSprings) == nil and heartbeatConnection then

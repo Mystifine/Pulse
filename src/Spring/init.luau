@@ -14,11 +14,18 @@ Spring.__type = "Spring";
 
 function Spring:Destroy()
   SpringScheduler.remove(self);
-  self._Connection:Disconnect();
-  self.Changed:Destroy();
+  if self._Connection then
+    self._Connection:Disconnect();
+    self._Connection = nil;
+  end
+
+  if self.Changed then
+    self.Changed:Destroy();
+    self.Changed = nil;
+  end
 end
 
-function Spring:_onStep(dt)
+function Spring:_onHeartbeat(dt)
 
   local T = self.Type;
   local f = self.Frequency * 2 * math.pi
