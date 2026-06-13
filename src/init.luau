@@ -4,6 +4,7 @@ local Runtime = require(script.Runtime);
 local Computed = require(script.Computed);
 local Effect = require(script.Effect);
 local Spring = require(script.Spring);
+local Tween = require(script.Tween);
 
 type Scope = Scope.Scope;
 type SpringConfig = Spring.SpringConfig;
@@ -39,6 +40,10 @@ function Pulse.ColorSpring(source, config : SpringConfig?)
   end))
 
   return color3Output;
+end
+
+function Pulse.Tween(source, tweenInfo)
+  return Pulse._track(Tween.new(source, tweenInfo));
 end
 
 function Pulse.Spring(source, config : SpringConfig?)
