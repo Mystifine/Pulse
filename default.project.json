@@ -1,6 +1,12 @@
 {
   "name": "Pulse",
   "tree": {
-    "$path": "src"
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Pulse": {
+        "$path": "src"
+      }
+    }
   }
 }
