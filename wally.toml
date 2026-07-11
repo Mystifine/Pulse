@@ -3,3 +3,12 @@ name = "mystifine/pulse"
 version = "0.2.2"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
+
+exclude = ["**"]
+
+include = [
+  "src",
+  "default.project.json",
+  "README.md",
+  "wally.toml"
+]
