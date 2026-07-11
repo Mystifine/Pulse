@@ -86,6 +86,39 @@ function Pulse.Value(value : any)
   return valueObj;
 end
 
+function Pulse.ForPairs(sourceValue, buildFn : (key : string, value : any) -> any)
+  local entries = {};
+  local output = Pulse.Value({});
+
+  Pulse.Effect(function()
+    local data = sourceValue:Get();
+
+    for key, entry in entries do
+      if data[key] == nil then
+        entry.scope:Destroy();
+        entries[key] = nil;
+      end
+    end
+
+    for key, value in data do
+      if entries[key] == nil then
+        local instance, scope = Pulse.Scope(function()
+          return buildFn(key, value);
+        end)
+        entries[key] = {instance = instance, scope = scope};
+      end
+    end
+
+    local out = {};
+    for key, entry in entries do
+      out[key] = entry.instance;
+    end
+    output:Set(out);
+  end)
+
+  return output;
+end
+
 function Pulse.Create(ui : string | (props : {}) -> GuiObject, properties : {[string] : any})
 
   local uiInstance;
@@ -122,8 +155,34 @@ function Pulse.Create(ui : string | (props : {}) -> GuiObject, properties : {[st
 
   local children = properties.Children;
   if children then
+
+    local function isReactive(v)
+      return typeof(v) == "table" and (getmetatable(v) == Computed or getmetatable(v) == Value);
+    end
+
     for _, child in children do
-      child.Parent = uiInstance;
+      if isReactive(child) then
+        local parented = {};
+
+        local function sync(list)
+          for _, inst in list do
+            if not parented[inst] then
+              inst.Parent = uiInstance;
+              parented[inst] = true;
+            end
+          end
+          for inst, _ in parented do
+            if inst.Parent == nil then
+              parented[inst] = nil;
+            end
+          end
+        end
+
+        sync(child:Get());
+        Pulse._track(child.Changed:Connect(sync));
+      else
+        child.Parent = uiInstance;
+      end
     end
   end
 
