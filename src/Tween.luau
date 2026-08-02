@@ -2,7 +2,7 @@ local TweenService = game:GetService("TweenService");
 
 local Runtime = require(script.Parent.Runtime);
 local Signal = require(script.Parent.Signal);
-local TweenScheduler = require(script.TweenScheduler);
+local FrameLoop = require(script.Parent.FrameLoop);
 
 local Tween = {};
 Tween.__index = Tween;
@@ -21,7 +21,12 @@ end
 function Tween:_onHeartbeat()
   local elapsedTime = os.clock() - self.StartTime;
 
-  local alpha = math.clamp(elapsedTime / self.TweenInfo.Time, 0, 1);
+  local alpha = 0;
+  if self.TweenInfo.Time == 0 then
+    alpha = 1
+  else
+    alpha = math.clamp(elapsedTime / self.TweenInfo.Time, 0, 1);
+  end
 
   local easedAlpha = TweenService:GetValue(alpha, self.TweenInfo.EasingStyle, self.TweenInfo.EasingDirection);
   
@@ -29,12 +34,12 @@ function Tween:_onHeartbeat()
   self.Changed:Fire(self.Value);
 
   if alpha >= 1 then
-    TweenScheduler.remove(self)
+    FrameLoop.removeTicker(self);
   end
 end
 
 function Tween:Destroy()
-  TweenScheduler.remove(self);
+  FrameLoop.removeTicker(self);
 
   if self._Connection then
     self._Connection:Disconnect();
@@ -74,7 +79,7 @@ function Tween.new(source, tweenInfo : TweenInfo)
     self.StartValue = self.Value;
     self.TargetValue = newValue;
 
-    TweenScheduler.add(self);
+    FrameLoop.queueTicker(self);
   end)
 
   return self;

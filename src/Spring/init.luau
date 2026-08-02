@@ -1,6 +1,6 @@
 local Signal = require(script.Parent.Signal);
 local Runtime = require(script.Parent.Runtime);
-local SpringScheduler = require(script.SpringScheduler);
+local FrameLoop = require(script.Parent.FrameLoop);
 local Adapter = require(script.Adapter);
 
 export type SpringConfig = {
@@ -13,7 +13,7 @@ Spring.__index = Spring;
 Spring.__type = "Spring";
 
 function Spring:Destroy()
-  SpringScheduler.remove(self);
+  FrameLoop.removeTicker(self);
   if self._Connection then
     self._Connection:Disconnect();
     self._Connection = nil;
@@ -48,7 +48,7 @@ function Spring:_onHeartbeat(dt)
     self.Value = self.Target
     self.Velocity = self.Type.zero
 
-    SpringScheduler.remove(self)
+    FrameLoop.removeTicker(self)
 
     self.Changed:Fire(self.Value)
 
@@ -82,7 +82,7 @@ function Spring:Set(value, resetVelocity)
     self.Velocity = self.Type.zero;
   end
 
-  SpringScheduler.add(self);
+  FrameLoop.queueTicker(self);
 end
 
 function Spring.new(source, config : SpringConfig?)
@@ -100,7 +100,7 @@ function Spring.new(source, config : SpringConfig?)
 
   self._Connection = source.Changed:Connect(function(newValue)
     self.Target = newValue;
-    SpringScheduler.add(self);
+    FrameLoop.queueTicker(self);
   end)
   
   return self;

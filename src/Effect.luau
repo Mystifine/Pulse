@@ -1,7 +1,8 @@
 local Runtime = require(script.Parent.Runtime);
-local EffectScheduler = require(script.EffectScheduler);
+local FrameLoop = require(script.Parent.FrameLoop);
 
 local Effect = {};
+Effect.__index = Effect;
 
 function Effect:Run()
   
@@ -18,8 +19,10 @@ function Effect:Run()
 end
 
 function Effect:Add(value : any)
+  if self._Seen[value] then return end;
+  self._Seen[value] = true;
   table.insert(self._Connections, value.Changed:Connect(function()
-    EffectScheduler.schedule(self);
+    FrameLoop.queueEffect(self);
   end))
 end
 
@@ -28,16 +31,20 @@ function Effect:Clear()
     connection:Disconnect();
   end
   table.clear(self._Connections);
+
+  self._Seen = {};
 end
 
 function Effect:Destroy()
   self:Clear();
   self.Callback = nil;
+  self._Seen = nil;
 end
 
 function Effect.new(fn : () -> ())
-  local self = setmetatable({}, {__index = Effect});
+  local self = setmetatable({}, Effect);
   self._Connections = {};
+  self._Seen = {};
   self.Callback = fn;
 
   self:Run();

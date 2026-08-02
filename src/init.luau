@@ -86,6 +86,86 @@ function Pulse.Value(value : any)
   return valueObj;
 end
 
+function Pulse.ForValues(sourceValue, buildFn : (value : any) -> any)
+  local entries = {};
+  local output = Pulse.Value({});
+
+  Pulse.Effect(function()
+    local data = sourceValue:Get();
+
+    local currentSet = {};
+    for _, value in data do
+      currentSet[value] = true;
+    end
+    
+    for valueReference, entry in entries do
+      -- Use the value reference as the index
+      if not currentSet[valueReference] then
+        entry.scope:Destroy();
+        entries[valueReference] = nil;
+      end
+    end
+
+    for _, value in data do
+      -- Compare the value reference
+      if entries[value] == nil then
+        local instance, scope = Pulse.Scope(function()
+          return buildFn(value);
+        end)
+        entries[value] = {instance = instance, scope = scope}; -- add additional value to check for reference
+      end
+    end
+
+    local out = {};
+    for i, value in data do
+      out[i] = entries[value].instance;
+    end
+    output:Set(out);
+  end)
+
+  return output;
+end
+
+function Pulse.ForKeys(sourceValue, buildFn : (value : any) -> any, keyFn : (value : any) -> string)
+  local entries = {};
+  local output = Pulse.Value({});
+
+  Pulse.Effect(function()
+    local data = sourceValue:Get();
+
+    local currentSet = {};
+    for _, value in data do
+      currentSet[keyFn(value)] = true;
+    end
+
+    for key, entry in entries do
+      if not currentSet[key] then
+        entry.scope:Destroy();
+        entries[key] = nil;
+      end
+    end
+
+    for _, value in data do
+      local key = keyFn(value);
+      if entries[key] == nil then
+        local instance, scope = Pulse.Scope(function()
+          return buildFn(value);
+        end)
+        entries[key] = {instance = instance, scope = scope};
+      end
+    end
+
+    local out = {};
+    for i, value in data do
+      out[i] = entries[keyFn(value)].instance;
+    end
+    output:Set(out);
+  end)
+
+  return output;
+  
+end
+
 function Pulse.ForPairs(sourceValue, buildFn : (key : string, value : any) -> any)
   local entries = {};
   local output = Pulse.Value({});
@@ -139,7 +219,7 @@ function Pulse.Create(ui : string | (props : {}) -> GuiObject, properties : {[st
             warn(string.format("Event %s does not exist on %s", eventName, uiInstance.ClassName));
           end
         end
-      elseif typeof(value) == "table" and (getmetatable(value) == Computed or getmetatable(value) == Value or getmetatable(value) == Spring) then
+      elseif typeof(value) == "table" and (getmetatable(value) == Computed or getmetatable(value) == Value or getmetatable(value) == Spring or getmetatable(value) == Tween) then
         uiInstance[property] = value:Get();
 
         Pulse._track(value.Changed:Connect(function(newValue)

@@ -1,6 +1,6 @@
 local Runtime = require(script.Parent.Runtime)
 local Signal = require(script.Parent.Signal);
-local ComputedScheduler = require(script.ComputedScheduler);
+local FrameLoop = require(script.Parent.FrameLoop);
 
 local Computed = {};
 Computed.__index = Computed;
@@ -49,7 +49,7 @@ function Computed:Add(value : any)
   self._Seen[value] = true;
 
   table.insert(self._Connections, value.Changed:Connect(function()
-    ComputedScheduler.schedule(self);
+    FrameLoop.queueComputation(self);
   end))
 end
 
