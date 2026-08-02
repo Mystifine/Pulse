@@ -245,6 +245,13 @@ function Pulse.Create(ui : string | (props : {}) -> GuiObject, properties : {[st
         local parented = {};
 
         local function sync(list)
+
+          if list == nil then
+            list = {};
+          elseif typeof(list) == "Instance" then
+            list = {list};
+          end
+
           for _, inst in list do
             if not parented[inst] then
               inst.Parent = uiInstance;
