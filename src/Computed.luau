@@ -17,7 +17,15 @@ function Computed:Clear()
 end
 
 function Computed:Get()
-  if self._Computing then return end;
+
+  local activeObserver = Runtime.getCurrentObserver();
+  if activeObserver and activeObserver ~= self then
+    activeObserver:Add(self);
+  end
+
+  if self._Computing then 
+    return self.Value;
+  end;
   self._Computing = true;
 
   -- Need to begin tracking
