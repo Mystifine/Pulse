@@ -82,6 +82,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 		"LightInfluence",
 		"MaxDistance",
 		"PlayerToHideFrom",
+		"Size",
 		"SizeOffset",
 		"StudsOffset",
 		"StudsOffsetWorldSpace",
