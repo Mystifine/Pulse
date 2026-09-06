@@ -58,6 +58,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	ScreenGui = {
+		"Name",
 		"Enabled",
 		"DisplayOrder",
 		"IgnoreGuiInset",
@@ -69,6 +70,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	},
 
 	BillboardGui = {
+		"Name",
 		"Active",
 		"Adornee",
 		"AlwaysOnTop",
@@ -89,6 +91,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	},
 
 	SurfaceGui = {
+		"Name",
 		"Active",
 		"Adornee",
 		"Face",
@@ -105,6 +108,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	},
 
 	CanvasGroup = {
+		"Name",
 		"GroupColor3",
 		"GroupTransparency",
 	},
@@ -114,10 +118,12 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	Frame = {
+		"Name",
 		"Style",
 	},
 
 	ScrollingFrame = {
+		"Name",
 		"AutomaticCanvasSize",
 		"BottomImage",
 		"CanvasPosition",
@@ -143,6 +149,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	ImageLabel = {
+		"Name",
 		"Image",
 		"ImageColor3",
 		"ImageRectOffset",
@@ -156,6 +163,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	},
 
 	ImageButton = {
+		"Name",
 		"AutoButtonColor",
 		"Image",
 		"ImageColor3",
@@ -176,6 +184,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	TextLabel = {
+		"Name",
 		"Font",
 		"FontFace",
 		"LineHeight",
@@ -195,6 +204,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	},
 
 	TextButton = {
+		"Name",
 		"AutoButtonColor",
 		"Font",
 		"FontFace",
@@ -217,6 +227,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	},
 
 	TextBox = {
+		"Name",
 		"ClearTextOnFocus",
 		"CursorPosition",
 		"Font",
@@ -245,6 +256,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	ViewportFrame = {
+		"Name",
 		"Ambient",
 		"CurrentCamera",
 		"ImageColor3",
@@ -259,6 +271,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	VideoFrame = {
+		"Name",
 		"Looped",
 		"Playing",
 		"TimePosition",
@@ -271,10 +284,12 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	UICorner = {
+		"Name",
 		"CornerRadius",
 	},
 
 	UIStroke = {
+		"Name",
 		"ApplyStrokeMode",
 		"BorderOffset",
 		"BorderStrokePosition",
@@ -288,6 +303,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	},
 
 	UIGradient = {
+		"Name",
 		"Color",
 		"Enabled",
 		"Offset",
@@ -296,6 +312,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	},
 
 	UITexture = {
+		"Name",
 		"Color",
 		"Enabled",
 		"OffsetStuds",
@@ -304,6 +321,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	},
 
 	UIShadow = {
+		"Name",
 		"BlurRadius",
 		"Color",
 		"Enabled",
@@ -318,6 +336,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	UIPadding = {
+		"Name",
 		"PaddingBottom",
 		"PaddingLeft",
 		"PaddingRight",
@@ -329,17 +348,20 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	UIAspectRatioConstraint = {
+		"Name",
 		"AspectRatio",
 		"AspectType",
 		"DominantAxis",
 	},
 
 	UISizeConstraint = {
+		"Name",
 		"MaxSize",
 		"MinSize",
 	},
 
 	UITextSizeConstraint = {
+		"Name",
 		"MaxTextSize",
 		"MinTextSize",
 	},
@@ -349,6 +371,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	UIScale = {
+		"Name",
 		"Scale",
 	},
 
@@ -357,6 +380,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	UIListLayout = {
+		"Name",
 		"FillDirection",
 		"HorizontalAlignment",
 		"HorizontalFlex",
@@ -373,6 +397,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	UIGridLayout = {
+		"Name",
 		"CellPadding",
 		"CellSize",
 		"FillDirection",
@@ -391,6 +416,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	UITableLayout = {
+		"Name",
 		"FillEmptySpaceColumns",
 		"FillEmptySpaceRows",
 		"MajorAxis",
@@ -403,6 +429,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	UIPageLayout = {
+		"Name",
 		"Animated",
 		"AnimationDirection",
 		"AnimationStyle",
@@ -424,6 +451,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 	-----------------------------------------------------------------
 
 	UIFlexItem = {
+		"Name",
 		"FlexMode",
 		"GrowRatio",
 		"ItemLineAlignment",
@@ -436,7 +464,7 @@ local CLASS_PROPERTIES: {[string]: {string}} = {
 ---------------------------------------------------------------------
 
 local GUI_OBJECT_PROPERTIES = {
-
+	"Name",
 	"Active",
 	"AnchorPoint",
 	"AutomaticSize",
@@ -464,7 +492,7 @@ local GUI_OBJECT_PROPERTIES = {
 ---------------------------------------------------------------------
 
 local GUI_BUTTON_PROPERTIES = {
-
+	"Name",
 	"AutoButtonColor",
 	"Modal",
 	"Selected",

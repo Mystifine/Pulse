@@ -1,4 +1,5 @@
 # Pulse
+**Version:** 0.2.9
 
 A powerful and intuitive reactive library for Roblox that enables declarative, functional UI development with automatic dependency tracking.
 !!! warning "AI-Assisted Documentation"
