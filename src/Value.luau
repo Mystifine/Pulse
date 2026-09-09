@@ -28,16 +28,15 @@ function Value.new(value : any)
   self.Value = value;
   self.Changed = Signal.new();
 
-  local activeScope = Runtime.getCurrentScope();
-  if activeScope then
-    activeScope:Add(self);
-  end
-
   return self;
 end
 
 function Value:Destroy()
-  self.Changed:Destroy();
+  if self.Changed then
+    self.Changed:Destroy()
+    self.Changed = nil;
+  end
+  
   self.Value = nil;
 end
 

@@ -5,84 +5,90 @@
 ]]
 
 export type Connection = {
-  Disconnect : (self : Connection) -> (),
+	Disconnect: (self: Connection) -> (),
 }
 
 export type Signal = {
-  Connect : (self : Signal, callback : (any) -> ()) -> Connection,
-  Once : (self : Signal, callback : (any) -> ()) -> Connection,
-  Fire : (self : Signal, ...any) -> nil,
-  Destroy : (self : Signal) -> nil,
+	Connect: (self: Signal, callback: (any) -> ()) -> Connection,
+	Once: (self: Signal, callback: (any) -> ()) -> Connection,
+	Fire: (self: Signal, ...any) -> nil,
+	Destroy: (self: Signal) -> nil,
 }
 
-local Signal = {};
-Signal.__index = Signal;
+local Signal = {}
+Signal.__index = Signal
 
-local Connection = {};
-Connection.__index = Connection;
+local Connection = {}
+Connection.__index = Connection
 
 function Connection:Disconnect()
-  if not self.Signal then return end;
+	if not self.Signal then
+		return
+	end
 
-  local index = table.find(self.Signal.Connections, self);
-  if index then
-    local len = #self.Signal.Connections;
-    self.Signal.Connections[index] = self.Signal.Connections[len];
-    self.Signal.Connections[len] = nil;
-  end
+	local index = table.find(self.Signal.Connections, self)
+	if index then
+		local len = #self.Signal.Connections
+		self.Signal.Connections[index] = self.Signal.Connections[len]
+		self.Signal.Connections[len] = nil
+	end
 
-  self.Signal = nil;
-  self.Callback = nil;
+	self.Signal = nil
+	self.Callback = nil
 end
 
-function Connection.new(signal : Signal, callback : (any) -> ())
-  local self = setmetatable({}, Connection);
-  self.Signal = signal;
-  self.Callback = callback;
+function Connection.new(signal: Signal, callback: (any) -> ())
+	local self = setmetatable({}, Connection)
+	self.Signal = signal
+	self.Callback = callback
 
-  return self;
+	return self
 end
 
-function Signal:Once(callback : (any) -> ())
-  local connection;
-  connection = self:Connect(function(...)
-    connection:Disconnect();
-    callback(...);
-  end)
-  return connection;
+function Signal:Once(callback: (any) -> ())
+	local connection
+	connection = self:Connect(function(...)
+		connection:Disconnect()
+		callback(...)
+	end)
+	return connection
 end
 
-function Signal:Connect(callback : (any) -> ())
-  
-  local newConnection = Connection.new(self, callback);
-  
-  table.insert(self.Connections, newConnection);
+function Signal:Connect(callback: (any) -> ())
+	local newConnection = Connection.new(self, callback)
 
-  return newConnection;
+	table.insert(self.Connections, newConnection)
+
+	return newConnection
 end
 
 function Signal:Fire(...)
-  local snapShot = table.clone(self.Connections);
-  for _, connection in snapShot do
-    task.spawn(connection.Callback, ...);
-  end
+	local snapshot = table.clone(self.Connections)
+
+	for _, connection in snapshot do
+		local callback = connection.Callback
+
+		if callback then
+			task.spawn(callback, ...)
+		end
+	end
 end
 
 function Signal:Destroy()
-  while #self.Connections > 0 do
-    self.Connections[#self.Connections]:Disconnect()
-  end
+	while #self.Connections > 0 do
+		self.Connections[#self.Connections]:Disconnect()
+	end
 
-  table.clear(self.Connections);
-  setmetatable(self, nil);
+	table.clear(self.Connections)
+	setmetatable(self, nil)
 end
 
 function Signal.new()
-  local self = setmetatable({}, Signal);
+	local self = setmetatable({}, Signal)
 
-  self.Connections = {};
+	self.Connections = {}
 
-  return self;
+	return self
 end
 
-return Signal;
+return Signal

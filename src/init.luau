@@ -25,7 +25,7 @@ function Pulse.ColorSpring(source, config : SpringConfig?)
   local initialColor = source:Get();
 
   local springTarget = Pulse.Value(Vector3.new(initialColor.R, initialColor.G, initialColor.B));
-  local internalVectorSpring = Pulse._track(Spring.new(springTarget, config));
+  local internalVectorSpring = Pulse.Spring(springTarget, config);
   local color3Output = Pulse.Value(initialColor);
 
   Pulse._track(source.Changed:Connect(function(newColor)
@@ -168,7 +168,7 @@ function Pulse.ForPairs(sourceValue, buildFn : (key : string, value : any) -> an
   local entries = {};
   local output = Pulse.Value({});
 
-  Pulse.Effect(function()
+ Pulse.Effect(function()
     local data = sourceValue:Get();
 
     for key, entry in entries do

@@ -15,7 +15,7 @@ function Scope:Destroy()
 
     local taskType = typeof(task);
 
-    if taskType == "RBXScriptConnection" then
+    if taskType == "RBXScriptConnection" or (type(task) == "table" and task.Disconnect) then
       task:Disconnect();
     elseif taskType == "Instance" or (type(task) == "table" and task.Destroy) then
       task:Destroy();

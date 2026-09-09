@@ -79,11 +79,6 @@ function Computed.new(fn : () -> any)
   computed.Changed = Signal.new();
   computed._Computing = false;
 
-  local activeScope = Runtime.getCurrentScope();
-  if activeScope then
-    activeScope:Add(computed);
-  end
-
   computed:Get();
 
   return computed;
