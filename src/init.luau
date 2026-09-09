@@ -60,21 +60,18 @@ function Pulse.Computed(callback : () -> any)
 end
 
 function Pulse.Scope(fn : (scope : Scope) -> ())
-  
   local scope = Scope.new();
 
   Runtime.pushScope(scope);
-
   local results = table.pack(xpcall(fn, debug.traceback, scope));
-  
   Runtime.popScope();
 
-  local success = table.remove(results, 1);
+  local success = results[1];
   if not success then
-    error(results[1]);
+    error(results[2]);
   end
 
-  return table.unpack(results), scope;
+  return scope, table.unpack(results, 2, results.n);
 end
 
 function Pulse.Effect(fn : () -> ())
