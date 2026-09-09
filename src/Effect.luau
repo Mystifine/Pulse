@@ -47,6 +47,11 @@ function Effect.new(fn : () -> ())
   self._Seen = {};
   self.Callback = fn;
 
+  local activeScope = Runtime.getCurrentScope();
+  if activeScope then
+    activeScope:Add(self);
+  end
+
   self:Run();
 
   return self;

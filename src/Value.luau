@@ -28,6 +28,11 @@ function Value.new(value : any)
   self.Value = value;
   self.Changed = Signal.new();
 
+  local activeScope = Runtime.getCurrentScope();
+  if activeScope then
+    activeScope:Add(self);
+  end
+
   return self;
 end
 

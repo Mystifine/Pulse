@@ -82,6 +82,11 @@ function Tween.new(source, tweenInfo : TweenInfo)
     FrameLoop.queueTicker(self);
   end)
 
+  local activeScope = Runtime.getCurrentScope();
+  if activeScope then
+    activeScope:Add(self);
+  end
+
   return self;
 end
 
