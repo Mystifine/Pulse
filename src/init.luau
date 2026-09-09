@@ -107,7 +107,7 @@ function Pulse.ForValues(sourceValue, buildFn : (value : any) -> any)
     for _, value in data do
       -- Compare the value reference
       if entries[value] == nil then
-        local instance, scope = Pulse.Scope(function()
+        local scope, instance = Pulse.Scope(function()
           return buildFn(value);
         end)
         entries[value] = {instance = instance, scope = scope}; -- add additional value to check for reference
@@ -146,7 +146,7 @@ function Pulse.ForKeys(sourceValue, buildFn : (value : any) -> any, keyFn : (val
     for _, value in data do
       local key = keyFn(value);
       if entries[key] == nil then
-        local instance, scope = Pulse.Scope(function()
+        local scope, instance = Pulse.Scope(function()
           return buildFn(value);
         end)
         entries[key] = {instance = instance, scope = scope};
@@ -180,7 +180,7 @@ function Pulse.ForPairs(sourceValue, buildFn : (key : string, value : any) -> an
 
     for key, value in data do
       if entries[key] == nil then
-        local instance, scope = Pulse.Scope(function()
+        local scope, instance = Pulse.Scope(function()
           return buildFn(key, value);
         end)
         entries[key] = {instance = instance, scope = scope};

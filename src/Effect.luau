@@ -27,7 +27,10 @@ function Effect:Add(value : any)
 end
 
 function Effect:Clear()
-  for _, connection in self._Connections do
+  local connections = self._Connections;
+  if not connections then return end;
+
+  for _, connection in connections do
     connection:Disconnect();
   end
   table.clear(self._Connections);
@@ -36,6 +39,9 @@ function Effect:Clear()
 end
 
 function Effect:Destroy()
+  if self._Destroyed then return end;
+  self._Destroyed = true;
+
   self:Clear();
   self.Callback = nil;
   self._Seen = nil;
@@ -43,6 +49,7 @@ end
 
 function Effect.new(fn : () -> ())
   local self = setmetatable({}, Effect);
+  self._Destroyed = false;
   self._Connections = {};
   self._Seen = {};
   self.Callback = fn;

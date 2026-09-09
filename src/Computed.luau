@@ -7,6 +7,8 @@ Computed.__index = Computed;
 
 function Computed:Clear()
   local connections = self._Connections;
+  if not connections then return end;
+  
   self._Connections = {};
   
   for _, connection in pairs(connections) do
@@ -17,6 +19,7 @@ function Computed:Clear()
 end
 
 function Computed:Get()
+  if self._Destroyed then return end;
 
   local activeObserver = Runtime.getCurrentObserver();
   if activeObserver and activeObserver ~= self then
@@ -62,22 +65,29 @@ function Computed:Add(value : any)
 end
 
 function Computed:Destroy()
+  if self._Destroyed then return end;
+  self._Destroyed = true;
+
   self:Clear(); -- Clears the connections
   self.Changed:Destroy();
   self.Value = nil;
   self.Callback = nil;
+  self._Computing = nil;
   self._Seen = nil;
   self._Connections = nil;
 end
 
 function Computed.new(fn : () -> any)
   local computed = setmetatable({}, Computed);
+  computed._Destroyed = false;
+  computed._Computing = false;
+  
+  computed.Value = nil;
   computed.Callback = fn;
+  computed.Changed = Signal.new();
+
   computed._Seen = {};
   computed._Connections = {};
-  computed.Value = nil;
-  computed.Changed = Signal.new();
-  computed._Computing = false;
 
   computed:Get();
 

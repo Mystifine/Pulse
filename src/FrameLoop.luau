@@ -19,6 +19,7 @@ function FrameLoop.flush(dt)
   local computations = queuedComputations;
   queuedComputations = {};
   for computation, _ in computations do
+    if computation._Destroyed then continue end;
     computation:Get();
   end
 
@@ -26,6 +27,7 @@ function FrameLoop.flush(dt)
   local effects = queuedEffects;
   queuedEffects = {};
   for effect, _ in effects do
+    if effect._Destroyed then continue end;
     effect:Run();
   end
 
