@@ -61,6 +61,10 @@ function Tween:Get()
   return self.Value;  
 end
 
+function Tween:Peek()
+  return self.Value;
+end
+
 function Tween.new(source, tweenInfo : TweenInfo)
   local self = setmetatable({}, Tween);
 

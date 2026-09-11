@@ -71,6 +71,10 @@ function Spring:Get()
   return self.Value;
 end
 
+function Spring:Peek()
+  return self.Value;
+end
+
 function Spring:Set(value, resetVelocity)
   if typeof(value) ~= typeof(self.Value) then
     error("Spring type mismatch")

@@ -18,6 +18,33 @@ function Computed:Clear()
   self._Seen = {};
 end
 
+function Computed:_Recompute()
+  if self._Computing then
+    return self.Value;
+  end
+  self._Computing = true;
+
+  self:Clear();
+  Runtime.pushObserver(self);
+
+  local success, result = xpcall(self.Callback, debug.traceback);
+
+  Runtime.popObserver();
+
+  if not success then
+    self._Computing = false;
+    error(result);
+  end
+
+  if self.Value ~= result then
+    self.Value = result;
+    self.Changed:Fire(result);
+  end
+  self._Computing = false;
+
+  return result;
+end
+
 function Computed:Get()
   if self._Destroyed then return end;
 
@@ -26,32 +53,13 @@ function Computed:Get()
     activeObserver:Add(self);
   end
 
-  if self._Computing then 
-    return self.Value;
-  end;
-  self._Computing = true;
+  return self:_Recompute();
+end
 
-  -- Need to begin tracking
-  self:Clear();
-  Runtime.pushObserver(self);
+function Computed:Peek()
+  if self._Destroyed then return end;
 
-  -- Computes value and removes observer
-  local sucess, result = xpcall(self.Callback, debug.traceback);
-  Runtime.popObserver();
-
-  if not sucess then 
-    self._Computing = false;
-    error(result) 
-  end;
-
-  -- Commit values
-  if self.Value ~= result then
-    self.Value = result;
-    self.Changed:Fire(result);
-  end
-  self._Computing = false;
-
-  return result;
+  return self:_Recompute();
 end
 
 function Computed:Add(value : any)

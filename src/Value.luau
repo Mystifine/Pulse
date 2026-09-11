@@ -15,6 +15,10 @@ function Value:Get()
   return self.Value;
 end
 
+function Value:Peek()
+  return self.Value;
+end
+
 function Value:Set(value : any)
   if value == self.Value then return end;
 
