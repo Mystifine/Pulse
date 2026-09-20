@@ -37,7 +37,6 @@ local RunService = game:GetService("RunService")
 
 if not RunService:IsStudio() then
 	warn("Pulse UI Serializer can only be used in Roblox Studio.", 2)
-	return;
 end
 
 local Serializer = {}

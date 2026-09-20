@@ -5,7 +5,7 @@ local Computed = require(script.Computed);
 local Effect = require(script.Effect);
 local Spring = require(script.Spring);
 local Tween = require(script.Tween);
-local Serializer = require(script.Serializer);
+--local Serializer = require(script.Serializer);
 
 type Scope = Scope.Scope;
 type SpringConfig = Spring.SpringConfig;
@@ -274,6 +274,6 @@ function Pulse.Create(ui : string | (props : {}) -> GuiObject, properties : {[st
   return Pulse._track(uiInstance);
 end
 
-Pulse.Seralizer = Serializer;
+--Pulse.Seralizer = Serializer;
 
 return Pulse;
