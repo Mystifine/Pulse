@@ -19,6 +19,10 @@ function Computed:Clear()
 end
 
 function Computed:_Recompute()
+  if not self._IsDirty then
+    return self.Value;
+  end
+
   if self._Computing then
     return self.Value;
   end
@@ -35,6 +39,8 @@ function Computed:_Recompute()
     self._Computing = false;
     error(result);
   end
+
+  self._IsDirty = false;
 
   if self.Value ~= result then
     self.Value = result;
@@ -68,6 +74,7 @@ function Computed:Add(value : any)
   self._Seen[value] = true;
 
   table.insert(self._Connections, value.Changed:Connect(function()
+    self._IsDirty = true;
     FrameLoop.queueComputation(self);
   end))
 end
@@ -83,12 +90,14 @@ function Computed:Destroy()
   self._Computing = nil;
   self._Seen = nil;
   self._Connections = nil;
+  self._IsDirty = nil;
 end
 
 function Computed.new(fn : () -> any)
   local computed = setmetatable({}, Computed);
   computed._Destroyed = false;
   computed._Computing = false;
+  computed._IsDirty = true; -- Must be true for the :Get() to return the initial value
   
   computed.Value = nil;
   computed.Callback = fn;
