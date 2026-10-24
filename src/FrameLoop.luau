@@ -12,9 +12,8 @@ function FrameLoop.flush(dt)
   
   -- First update ticked based updates
   for ticker, _ in tickers do
-    local ok, err = xpcall(function()
-      ticker:_onHeartbeat(dt); -- Required method call
-    end, debug.traceback)
+    
+    local ok, err = xpcall(ticker._onHeartbeat, debug.traceback, ticker, dt);
 
     if not ok then
       warn("[FrameLoop] Error in Ticker:", err);
@@ -27,9 +26,7 @@ function FrameLoop.flush(dt)
   for computation, _ in computations do
     if computation._Destroyed then continue end;
 
-    local ok, err = xpcall(function()
-      computation:Get();
-    end, debug.traceback)
+    local ok, err = xpcall(computation.Get, debug.traceback, computation);
     
     if not ok then
       warn("[FrameLoop] Error in Computation:", err);
@@ -42,10 +39,8 @@ function FrameLoop.flush(dt)
   for effect, _ in effects do
     if effect._Destroyed then continue end;
 
-    local ok, err = xpcall(function()
-      effect:Run();
-    end, debug.traceback)
-    
+    local ok, err = xpcall(effect.Run, debug.traceback, effect);
+
     if not ok then
       warn("[FrameLoop] Error in Effect:", err)
     end
